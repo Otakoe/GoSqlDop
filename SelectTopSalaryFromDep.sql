@@ -29,4 +29,5 @@ call addingtopsalaryguys(3);
 select result.name,result.salary,dep.name as departament from result
 -- присоединяю таблицу с названиями департаментов
 		inner join department dep
-		on dep.id = result.departmentid;
+		on dep.id = result.departmentid
+	order by dep.id asc,result.salary desc;
