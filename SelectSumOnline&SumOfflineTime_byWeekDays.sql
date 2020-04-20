@@ -1,0 +1,47 @@
+drop table if exists tmp;
+create table tmp
+select * from lifetime
+order by user_id,status_time;
+
+alter table tmp
+add column que int auto_increment unique key;
+
+select result.user_id as user_id,dayname(result.data) as dayofweek,sec_to_time(sum(result.uptime)) as time_online, sec_to_time(time_to_sec('24:00:00')-sum(result.uptime)) as time_offline
+	from(
+		select date(d1.status_time)as data,d1.user_id,time_to_sec(timediff(d2.status_time,d1.status_time)) as uptime
+			from tmp d1
+			join tmp d2
+			on date(d2.status_time)=date(d1.status_time) and d2.user_id=d1.user_id 
+			where d1.que=(d2.que-1) and d2.status='offline' and d1.status='online'
+		union
+		select date(d1.status_time)as data,d1.user_id,time_to_sec(timediff(adddate(date(d2.status_time),interval -1 second),d1.status_time)) as uptime
+			from tmp d1
+			join tmp d2
+			on date(d2.status_time)>date(d1.status_time) and d2.user_id=d1.user_id 
+			where d1.que=(d2.que-1) and d2.status='offline' and d1.status='online'
+		union
+		select date(d2.status_time)as data,d1.user_id,time_to_sec(timediff(d2.status_time,timestamp(date(d2.status_time)))) as uptime
+			from tmp d1
+			join tmp d2
+			on date(d2.status_time)>date(d1.status_time) and d2.user_id=d1.user_id 
+			where d1.que=(d2.que-1) and d2.status='offline' and d1.status='online') result
+group by user_id,dayofweek
+order by user_id,dayofweek
+limit 200;
+
+
+
+/*
+"order by user_id
+"	alter table	 add que int not null auto_increment unique key		
+				
+Select	 WEEKDAY(дата)	юзер	sec_to_time(сумма онлайн)	sec_to_time(сумма (time_to_sec(24:00:00-online)))
+
+			select	date(таймштамп), юзер	time_to_sec(timediff( ))	следующий оффлан - онлайн
+				там где	один юзер и одна дата	
+			джоин	разница		23:59:59этой даты - онлайн
+				там где	не одна дата но следующая запись о юзере	
+			джоин	разница		и след.оффлайн - след. дата 0:00:00
+				там где	не одна дата но следующая запись о юзере	
+сортировать по усерам, потом дням недели
+			*/
