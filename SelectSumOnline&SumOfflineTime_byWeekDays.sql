@@ -28,20 +28,3 @@ select result.user_id as user_id,dayname(result.data) as dayofweek,sec_to_time(s
 group by user_id,dayofweek
 order by user_id,dayofweek
 limit 200;
-
-
-
-/*
-"order by user_id
-"	alter table	 add que int not null auto_increment unique key		
-				
-Select	 WEEKDAY(дата)	юзер	sec_to_time(сумма онлайн)	sec_to_time(сумма (time_to_sec(24:00:00-online)))
-
-			select	date(таймштамп), юзер	time_to_sec(timediff( ))	следующий оффлан - онлайн
-				там где	один юзер и одна дата	
-			джоин	разница		23:59:59этой даты - онлайн
-				там где	не одна дата но следующая запись о юзере	
-			джоин	разница		и след.оффлайн - след. дата 0:00:00
-				там где	не одна дата но следующая запись о юзере	
-сортировать по усерам, потом дням недели
-			*/
