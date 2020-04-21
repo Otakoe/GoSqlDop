@@ -26,5 +26,5 @@ select result.user_id as user_id,dayname(result.data) as dayofweek,sec_to_time(s
 			on date(d2.status_time)>date(d1.status_time) and d2.user_id=d1.user_id 
 			where d1.que=(d2.que-1) and d2.status='offline' and d1.status='online') result
 group by user_id,dayofweek
-order by user_id,dayofweek
+order by user_id,field(dayofweek,'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')
 limit 200;
